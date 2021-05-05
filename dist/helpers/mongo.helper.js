@@ -14,12 +14,8 @@ class MongoDBHelper {
     constructor(ENV, isAuth = false) {
         this.statusConnection = {};
         this.dbUri = '';
-        if (isAuth) {
-            this.dbUri = `mongodb://${ENV.USER_NAME}_${ENV.USER_PASSWORD}@${ENV.HOST}:${ENV.PORT}/${ENV.DATABASE}`;
-        }
-        else {
-            this.dbUri = `mongodb://${ENV.HOST}:${ENV.PORT}/${ENV.DATABASE}`;
-        }
+        this.dbUri = `mongodb://${ENV.USER_NAME}:${ENV.USER_PASSWORD}@${ENV.HOST}:${ENV.PORT}/${ENV.DATABASE}/?authSource=admin`;
+        console.log(this.dbUri);
     }
     static getInstance(ENV, isAuth = false) {
         return this._instance || (this._instance = new this(ENV, isAuth));
