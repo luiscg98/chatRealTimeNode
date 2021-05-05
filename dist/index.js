@@ -32,7 +32,7 @@ const tokenHelper = token_helper_1.default(env_1.default, mongo);
         app.use(express_1.default.json());
         app.use(compression_1.default());
         let whitelist = [
-            'http://angular.midomio'
+            'http://angular.midomio.com'
         ];
         app.use(cors_1.default({
             origin: (origin, callback) => {
@@ -105,7 +105,7 @@ const tokenHelper = token_helper_1.default(env_1.default, mongo);
         const httpServer = http_1.default.createServer(app);
         const socketIO = require('socket.io')(httpServer, {
             cors: {
-                origin: "http://angular.midominio",
+                origin: "http://angular.midominio.com",
                 credentials: true,
             },
             allowEIO3: true
