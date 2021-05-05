@@ -15,7 +15,7 @@ class MongoDBHelper {
         this.statusConnection = {};
         this.dbUri = '';
         if (isAuth) {
-            this.dbUri = `mongodb://${ENV.USER_NAME}_${ENV.USER_PASSWORD}@${ENV.HOST}:${ENV.PORT}/${ENV.DATABASE}`;
+            this.dbUri = `mongodb://${ENV.USER_NAME}:${ENV.USER_PASSWORD}@${ENV.HOST}:${ENV.PORT}/${ENV.DATABASE}/?authSource=admin`;
         }
         else {
             this.dbUri = `mongodb://${ENV.HOST}:${ENV.PORT}/${ENV.DATABASE}`;
