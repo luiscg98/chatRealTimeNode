@@ -24,7 +24,7 @@ const tokenHelper = TokenHelper(ENV, mongo);
         let whitelist = [
             'http://angular.midomio.com'
         ];
-        app.use(cors({origin:true, credentials:true}));
+        app.use(cors({origin:true}));
         //app.use(cors({origin: true, credentials: true}));
 
         app.get('/', (req: Request, res: Response) => {
@@ -89,7 +89,6 @@ const tokenHelper = TokenHelper(ENV, mongo);
         const socketIO = require('socket.io')(httpServer,{
             cors: {
             origin: "http://angular.midominio.com",
-            credentials: true,
             },
             allowEIO3: true
             });
