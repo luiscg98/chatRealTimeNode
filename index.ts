@@ -86,7 +86,13 @@ const tokenHelper = TokenHelper(ENV, mongo);
         })*/
 
         const httpServer = http.createServer(app);
-        const socketIO = require('socket.io')(httpServer, cors());
+        const socketIO = require('socket.io')(httpServer,{
+            cors: {
+            origin: "http://angular.midominio.com",
+            credentials: true,
+            },
+            allowEIO3: true
+            });
 
         // Funcionalidad Real-Time
         const socketLogic = SocketLogic(mongo);
