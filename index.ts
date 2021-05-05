@@ -24,7 +24,7 @@ const tokenHelper = TokenHelper(ENV, mongo);
         let whitelist = [
             'http://angular.midomio.com'
         ];
-        app.use(cors());
+        app.use(cors({origin:true, credentials:true}));
         //app.use(cors({origin: true, credentials: true}));
 
         app.get('/', (req: Request, res: Response) => {
