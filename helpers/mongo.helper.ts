@@ -11,6 +11,7 @@ export default class MongoDBHelper{
     private dbUri: string = '';
 
     constructor(ENV:any, isAuth: boolean = false){
+        console.log(isAuth);
         if(isAuth){
             this.dbUri = `mongodb://${ENV.USER_NAME}:${ENV.USER_PASSWORD}@${ENV.HOST}:${ENV.PORT}/${ENV.DATABASE}/?authSource=admin`
         }
