@@ -71,6 +71,7 @@ export default (mongo: any) => {
         },*/
         signIn: (io: any, socket: Socket) => {
             socket.on('signIn', async (payload: any) => {
+                console.log(payload);
                 // Guardar en Base de Datos
 
                 try {
@@ -86,15 +87,16 @@ export default (mongo: any) => {
                         {
                             $set: {
                                 nombreCompleto: payload.displayName,
-                                fotoURL: payload.photoUrl
+                                fotoURL: payload.phtoUrl
                             }
                         }
                     )
 
+                    console.log(payload);
                     const token:any = await tokenHelper.create({
                         correo:payload.email,
                         nombreCompleto:payload.displayName,
-                        fotoUrl:payload.PhotoURL 
+                        fotoUrl:payload.phtoURL 
                     }, payload.apiKey);
 
                     if(token.ok == true)

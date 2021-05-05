@@ -10,7 +10,7 @@ import TokenHelper from './helpers/token.helper';
 import api from './routes/index';
 import SocketIO from 'socket.io';
 
-const mongo = MongoHelper.getInstance(ENV.MONGODB);
+const mongo = MongoHelper.getInstance(ENV.MONGODB, true);
 const tokenHelper = TokenHelper(ENV, mongo);
 
 (async() => {

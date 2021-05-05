@@ -76,6 +76,7 @@ exports.default = (mongo) => {
         },*/
         signIn: (io, socket) => {
             socket.on('signIn', (payload) => __awaiter(void 0, void 0, void 0, function* () {
+                console.log(payload);
                 // Guardar en Base de Datos
                 try {
                     yield mongo.db.collection('sockets')
@@ -85,13 +86,14 @@ exports.default = (mongo) => {
                     {
                         $set: {
                             nombreCompleto: payload.displayName,
-                            fotoURL: payload.photoUrl
+                            fotoURL: payload.phtoUrl
                         }
                     });
+                    console.log(payload);
                     const token = yield tokenHelper.create({
                         correo: payload.email,
                         nombreCompleto: payload.displayName,
-                        fotoUrl: payload.PhotoURL
+                        fotoUrl: payload.phtoURL
                     }, payload.apiKey);
                     if (token.ok == true)
                         io.to(socket.id).emit('token', token.token);

@@ -7,8 +7,8 @@ exports.default = {
     MONGODB: {
         HOST: 'localhost',
         PORT: '27017',
-        USER_NAME: '',
-        USER_PASSWORD: '',
+        USER_NAME: 'dba-root',
+        USER_PASSWORD: 'mongoadmin',
         DATABASE: 'dbMTWyM'
     },
     TOKEN: {

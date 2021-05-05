@@ -101,7 +101,7 @@ Routes.post('/login', async (req:Request, res:Response) => {
             }
             
 
-            const token:any = await tokenHelper.create({correo,usuario:result.nombreCompleto,fotoUrl:result.fotoUrl},apikey);
+            const token:any = await tokenHelper.create({correo,nombreCompleto:result.nombreCompleto,fotoUrl:result.fotoUrl},apikey);
             console.log(token);
 
             return res.status(200).json({

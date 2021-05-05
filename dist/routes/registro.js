@@ -102,7 +102,7 @@ Routes.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
                     msg: `Credenciales incorrectas`
                 });
             }
-            const token = yield tokenHelper.create({ correo, usuario: result.nombreCompleto, fotoUrl: result.fotoUrl }, apikey);
+            const token = yield tokenHelper.create({ correo, nombreCompleto: result.nombreCompleto, fotoUrl: result.fotoUrl }, apikey);
             console.log(token);
             return res.status(200).json({
                 ok: true,
