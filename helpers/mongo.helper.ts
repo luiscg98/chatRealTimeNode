@@ -11,8 +11,13 @@ export default class MongoDBHelper{
     private dbUri: string = '';
 
     constructor(ENV:any, isAuth: boolean = false){
-        this.dbUri = `mongodb://${ENV.USER_NAME}:${ENV.USER_PASSWORD}@${ENV.HOST}:${ENV.PORT}/${ENV.DATABASE}/?authSource=admin`;
-        console.log(this.dbUri);
+        if(isAuth){
+            this.dbUri = `mongodb://${ENV.USER_NAME}_${ENV.USER_PASSWORD}@${ENV.HOST}:${ENV.PORT}/${ENV.DATABASE}`
+        }
+        else{
+            this.dbUri = `mongodb://${ENV.HOST}:${ENV.PORT}/${ENV.DATABASE}`;
+        }
+
     }
 
     public static getInstance(ENV:any, isAuth:boolean = false){
