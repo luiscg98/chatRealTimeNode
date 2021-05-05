@@ -34,18 +34,7 @@ const tokenHelper = token_helper_1.default(env_1.default, mongo);
         let whitelist = [
             'http://angular.midomio.com'
         ];
-        app.use(cors_1.default({
-            origin: (origin, callback) => {
-                // allow requests with no origin
-                if (!origin)
-                    return callback(null, true);
-                if (whitelist.indexOf(origin) === -1) {
-                    var message = `The CORS policy for this origin doesn't allow access from the particular origin.`;
-                    return callback(new Error(message), false);
-                }
-                return callback(null, true);
-            }
-        }));
+        app.use(cors_1.default());
         //app.use(cors({origin: true, credentials: true}));
         app.get('/', (req, res) => {
             res.status(200).json({
