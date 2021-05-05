@@ -17,7 +17,7 @@ export default class MongoDBHelper{
         else{
             this.dbUri = `mongodb://${ENV.HOST}:${ENV.PORT}/${ENV.DATABASE}`;
         }
-
+        console.log(this.dbUri);
     }
 
     public static getInstance(ENV:any, isAuth:boolean = false){

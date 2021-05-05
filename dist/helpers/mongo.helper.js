@@ -20,6 +20,7 @@ class MongoDBHelper {
         else {
             this.dbUri = `mongodb://${ENV.HOST}:${ENV.PORT}/${ENV.DATABASE}`;
         }
+        console.log(this.dbUri);
     }
     static getInstance(ENV, isAuth = false) {
         return this._instance || (this._instance = new this(ENV, isAuth));

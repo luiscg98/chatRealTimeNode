@@ -21,7 +21,7 @@ const sockets_logic_1 = __importDefault(require("./sockets/sockets.logic"));
 const env_1 = __importDefault(require("./enviroments/env"));
 const token_helper_1 = __importDefault(require("./helpers/token.helper"));
 const index_1 = __importDefault(require("./routes/index"));
-const mongo = mongo_helper_1.default.getInstance(env_1.default.MONGODB, true);
+const mongo = mongo_helper_1.default.getInstance(env_1.default.MONGODB);
 const tokenHelper = token_helper_1.default(env_1.default, mongo);
 (() => __awaiter(void 0, void 0, void 0, function* () {
     yield mongo.connect(env_1.default.MONGODB.DATABASE);
