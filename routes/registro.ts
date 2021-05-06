@@ -18,7 +18,7 @@ Routes.post('/registro', async (req:Request, res:Response) => {
 
         if (!result){
             const result2: any = await mongo.db.collection('usuarios').insertOne({
-                correo,contraseña:bcrypt.hashSync(contraseña,11), nombreCompleto, fotoUrl:null,isValid:false,oauth2:false,createdDate:new Date()
+                correo,contrasena:bcrypt.hashSync(contraseña,11), nombreCompleto, fotoUrl:null,isValid:false,oauth2:false,createdDate:new Date()
             });
             return res.status(200).json({
                 ok:false,
@@ -73,6 +73,7 @@ Routes.post('/registroOauth', async (req:Request, res:Response) => {
 });
 
 Routes.post('/login', async (req:Request, res:Response) => {
+    console.log(req.body);
 
     let {correo,contraseña,apikey} = req.body;
 

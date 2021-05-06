@@ -27,7 +27,7 @@ Routes.post('/registro', (req, res) => __awaiter(void 0, void 0, void 0, functio
         const result = yield mongo.db.collection('usuarios').findOne({ correo });
         if (!result) {
             const result2 = yield mongo.db.collection('usuarios').insertOne({
-                correo, contraseña: bcrypt_1.default.hashSync(contraseña, 11), nombreCompleto, fotoUrl: null, isValid: false, oauth2: false, createdDate: new Date()
+                correo, contrasena: bcrypt_1.default.hashSync(contraseña, 11), nombreCompleto, fotoUrl: null, isValid: false, oauth2: false, createdDate: new Date()
             });
             return res.status(200).json({
                 ok: false,
@@ -79,6 +79,7 @@ Routes.post('/registroOauth', (req, res) => __awaiter(void 0, void 0, void 0, fu
     }
 }));
 Routes.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(req.body);
     let { correo, contraseña, apikey } = req.body;
     try {
         mongo.setDataBase('dbMTWyM');
