@@ -88,7 +88,7 @@ const tokenHelper = TokenHelper(ENV, mongo);
         const httpServer = http.createServer(app);
         const socketIO = require('socket.io')(httpServer,{
             cors: {
-            origin: ["http://angular.midominio.com", "http:localhost:4200"]
+            origin: ["http://angular.midominio.com", "http://localhost:4200"]
             },
             allowEIO3: true
             });
