@@ -3,7 +3,7 @@ export default {
         PORT:3000
     },
     MONGODB:{
-        HOST:'192.168.1.74',
+        HOST:'52.3.241.229',
         PORT:'27017',
         USER_NAME:'dba-root',
         USER_PASSWORD:'mongoadmin',
