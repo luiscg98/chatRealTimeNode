@@ -35,7 +35,6 @@ const tokenHelper = token_helper_1.default(env_1.default, mongo);
             'http://angular.midomio.com'
         ];
         app.use(cors_1.default({ origin: true, credentials: true }));
-        //app.use(cors({origin: true, credentials: true}));
         app.get('/', (req, res) => {
             res.status(200).json({
                 ok: true,
@@ -43,54 +42,6 @@ const tokenHelper = token_helper_1.default(env_1.default, mongo);
             });
         });
         app.use('/api', index_1.default);
-        /*app.post('/loginOAuth2', async (req: Request, res: Response) => {
-            const { correo, apiKey } = req.body;
-
-            console.log('Evaluar REQ.BODY =======>', correo);
-
-            const response: any = await mongo.db.collection('usuarios')
-                .findOne(
-                    { correo, isVerify: true },
-                    { projection: { _id: 0, correo: 1, fotoURL: 1, nombreCompleto: 1}}
-                )
-                .then((result: any) => {
-
-                    console.log('EVALUAR RESULT =====>', result);
-
-                    if (!result) {
-                        return {
-                            ok: false,
-                            code: 404,
-                            msg: `Lo sentimos, el usuario ${correo} no se ha registrado aún o bien no ha habilitado su acceso`
-                        }
-                    }
-                    return {
-                        ok: true,
-                        code: 200,
-                        msg: `Inicio de sesión realizado de forma exitosa para el usuario ${correo}`,
-                        result
-                    }
-                })
-                .catch((error: any) => {
-                    return {
-                        ok: false,
-                        code: 500,
-                        msg: `Ocurrio un error no contemplado al intentar inicar sesión con el usuario ${correo}`,
-                        error
-                    }
-                });
-
-
-            console.log('ERROR LOGIN =========>', response);
-            
-            if (response.ok == false) {
-                res.status(response.code).json(response);
-            } else {
-                // Solicitar Token para usuario
-                const token: any = await tokenHelper.create(response.result, apiKey);
-                res.status(response.code).json(token);
-            }
-        })*/
         const httpServer = http_1.default.createServer(app);
         const socketIO = require('socket.io')(httpServer, {
             cors: {
@@ -103,16 +54,11 @@ const tokenHelper = token_helper_1.default(env_1.default, mongo);
         socketIO.on('connection', (socket) => {
             // TO DO: Lógica Real-Time
             console.log(`Nuevo cliente conectado con ID: ${socket.id}`);
-            // Socket Connect
-            //socketLogic.listenSocketConnect(socket);
-            //socketLogic.conecciones(socketIO,socket);
-            //actualizar
-            socketLogic.actualizarCorreo(socketIO, socket);
+            socketLogic.actualizarSocket(socketIO, socket);
             socketLogic.logOut(socketIO, socket);
-            // Logic SignUp
             socketLogic.signIn(socketIO, socket);
-            // Logic Disconnect
             socketLogic.disconnect(socketIO, socket);
+            socketLogic.actualizarButacaSelecconada(socketIO, socket);
         });
         httpServer.listen(env_1.default.API.PORT, () => {
             console.log(`Servidor Express funcionando correctamente en puerto ${env_1.default.API.PORT}`);

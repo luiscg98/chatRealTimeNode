@@ -10,61 +10,27 @@ const tokenHelper = TokenHelper(env, mongo);
 
 Routes.post('/registro', async (req:Request, res:Response) => {
 
-    let {correo,contraseña,nombreCompleto} = req.body;
+    let {usuario,contraseña,role} = req.body;
 
     try {
-        mongo.setDataBase('dbMTWyM');
-        const result:any = await mongo.db.collection('usuarios').findOne({correo});
+        const result:any = await mongo.db.collection('usuarios').findOne({usuario});
 
         if (!result){
             const result2: any = await mongo.db.collection('usuarios').insertOne({
-                correo,contrasena:bcrypt.hashSync(contraseña,11), nombreCompleto, fotoUrl:null,isValid:false,oauth2:false,createdDate:new Date()
+                usuario,contrasena:bcrypt.hashSync(contraseña,11), createdDate:new Date(), role
             });
             return res.status(200).json({
-                ok:false,
-                msg:`Registro finalizado con exito, recibiste un correo electronico para validarlo`
+                ok:true,
+                msg:`Registro finalizado con exito`
             });
         }
         else{
             return res.status(500).json({
                 ok:false,
-                msg:`El correo ${correo} ya esta registrado`
+                msg:`El correo ${usuario} ya esta registrado`
             });
         } 
     } catch (error) {
-        return res.status(500).json({
-            ok:false,
-            msg:`Error en el servidor`
-        });
-    }
-});
-
-Routes.post('/registroOauth', async (req:Request, res:Response) => {
-
-    let {correo,nombreCompleto,fotoUrl} = req.body;
-
-    try {
-        mongo.setDataBase('dbMTWyM');
-        const result:any = await mongo.db.collection('usuarios').findOne({correo});
-        console.log(result);
-
-        if (!result){
-            const result2: any = await mongo.db.collection('usuarios').insertOne({
-                correo, contraseña:null,nombreCompleto,fotoUrl,isValid:false,oauth2:true,createdDate:new Date()
-            });
-            return res.status(200).json({
-                ok:false,
-                msg:`Registro finalizado con exito, recibiste un correo electronico para validarlo`
-            });
-        }
-        else{
-            return res.status(500).json({
-                ok:false,
-                msg:`El correo ${correo} ya esta registrado`
-            });
-        } 
-    } catch (error) {
-        console.log(error);
         return res.status(500).json({
             ok:false,
             msg:`Error en el servidor`
@@ -73,37 +39,34 @@ Routes.post('/registroOauth', async (req:Request, res:Response) => {
 });
 
 Routes.post('/login', async (req:Request, res:Response) => {
-    console.log(req.body);
 
-    let {correo,contraseña,apikey} = req.body;
+    let {usuario,contraseña,trabajador,apikey} = req.body;
 
     try {
-        mongo.setDataBase('dbMTWyM');
-        const result:any = await mongo.db.collection('usuarios').findOne({correo});
+        const result:any = await mongo.db.collection('usuarios').findOne({usuario});
 
         if (result){
-            /*if(result.isValid==false){
-                return res.status(401).json({
-                    ok:false,
-                    msg:`No has habilitado tu cuenta, en tu correo te mandamos un mail para que puedas darlo de alta`
-                });
-            }*/
-            if(result.oauth2==true && result.contrasena==null){
-                return res.status(401).json({
-                    ok:false,
-                    msg:`No has habilitado una contraseña para este correo. Intenta entrar con el boton de Gmail`
-                });
-            }
             if(!bcrypt.compareSync(contraseña,result.contrasena)){
-                return res.status(500).json({
+                return res.status(401).json({
                     ok:false,
                     msg:`Credenciales incorrectas`
                 });
             }
+
+            if(!(result.sesion == undefined || result.sesion == null)){
+                console.log("otro dispositivo");
+                return res.status(401).json({
+                    ok:false,
+                    msg:`Sesión iniciada en otro dispositivo`
+                });
+            }
+
+            result.sesion=[{inicioSesion:new Date()}];
+
+            mongo.db.collection('usuarios').replaceOne({_id:result._id},result);
             
 
-            const token:any = await tokenHelper.create({correo,nombreCompleto:result.nombreCompleto,fotoUrl:result.fotoUrl},apikey);
-            console.log(token);
+            const token:any = await tokenHelper.create({usuario,trabajador,role:result.role},apikey);
 
             return res.status(200).json({
                 ok:true,
@@ -111,13 +74,38 @@ Routes.post('/login', async (req:Request, res:Response) => {
             });
         }
         else{
-            return res.status(500).json({
+            return res.status(401).json({
                 ok:false,
                 msg:`Credenciales incorrectas`
             });
         } 
     } catch (error) {
         console.log(error);
+        return res.status(500).json({
+            ok:false,
+            msg:`Error en el servidor`
+        });
+    }
+});
+
+Routes.post('/logout', async (req:Request, res:Response) => {
+
+    let {usuario} = req.body;
+
+    try {
+        const result:any = await mongo.db.collection('usuarios').findOne({usuario});
+        if (result){
+            result.sesion=null;
+            mongo.db.collection('usuarios').replaceOne({_id:result._id},result);
+            return res.status(200).json({ok:true,msg:'Cierre de sesión exitoso'});
+        }
+        else{
+            return res.status(500).json({
+                ok:false,
+                msg:`No se encontro el usuario ${usuario}`
+            });
+        } 
+    } catch (error) {
         return res.status(500).json({
             ok:false,
             msg:`Error en el servidor`

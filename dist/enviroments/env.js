@@ -5,13 +5,13 @@ exports.default = {
         PORT: 3000
     },
     MONGODB: {
-        HOST: 'mongodb.luiscg.me',
+        HOST: 'localhost',
         PORT: '27017',
         USER_NAME: 'dba-root',
         USER_PASSWORD: 'mongoadmin',
-        DATABASE: 'dbMTWyM'
+        DATABASE: 'boletoFiera'
     },
     TOKEN: {
-        EXPIRES: 60 * 60 * 4
+        EXPIRES: 60 * 60 * 24
     }
 };

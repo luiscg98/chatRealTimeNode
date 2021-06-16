@@ -21,57 +21,26 @@ const Routes = express_1.Router();
 const mongo = mongo_helper_1.default.getInstance(env_1.default.MONGODB);
 const tokenHelper = token_helper_1.default(env_1.default, mongo);
 Routes.post('/registro', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { correo, contraseña, nombreCompleto } = req.body;
+    let { usuario, contraseña, role } = req.body;
     try {
-        mongo.setDataBase('dbMTWyM');
-        const result = yield mongo.db.collection('usuarios').findOne({ correo });
+        const result = yield mongo.db.collection('usuarios').findOne({ usuario });
         if (!result) {
             const result2 = yield mongo.db.collection('usuarios').insertOne({
-                correo, contrasena: bcrypt_1.default.hashSync(contraseña, 11), nombreCompleto, fotoUrl: null, isValid: false, oauth2: false, createdDate: new Date()
+                usuario, contrasena: bcrypt_1.default.hashSync(contraseña, 11), createdDate: new Date(), role
             });
             return res.status(200).json({
-                ok: false,
-                msg: `Registro finalizado con exito, recibiste un correo electronico para validarlo`
+                ok: true,
+                msg: `Registro finalizado con exito`
             });
         }
         else {
             return res.status(500).json({
                 ok: false,
-                msg: `El correo ${correo} ya esta registrado`
+                msg: `El correo ${usuario} ya esta registrado`
             });
         }
     }
     catch (error) {
-        return res.status(500).json({
-            ok: false,
-            msg: `Error en el servidor`
-        });
-    }
-}));
-Routes.post('/registroOauth', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let { correo, nombreCompleto, fotoUrl } = req.body;
-    try {
-        mongo.setDataBase('dbMTWyM');
-        const result = yield mongo.db.collection('usuarios').findOne({ correo });
-        console.log(result);
-        if (!result) {
-            const result2 = yield mongo.db.collection('usuarios').insertOne({
-                correo, contraseña: null, nombreCompleto, fotoUrl, isValid: false, oauth2: true, createdDate: new Date()
-            });
-            return res.status(200).json({
-                ok: false,
-                msg: `Registro finalizado con exito, recibiste un correo electronico para validarlo`
-            });
-        }
-        else {
-            return res.status(500).json({
-                ok: false,
-                msg: `El correo ${correo} ya esta registrado`
-            });
-        }
-    }
-    catch (error) {
-        console.log(error);
         return res.status(500).json({
             ok: false,
             msg: `Error en el servidor`
@@ -79,39 +48,33 @@ Routes.post('/registroOauth', (req, res) => __awaiter(void 0, void 0, void 0, fu
     }
 }));
 Routes.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.body);
-    let { correo, contraseña, apikey } = req.body;
+    let { usuario, contraseña, trabajador, apikey } = req.body;
     try {
-        mongo.setDataBase('dbMTWyM');
-        const result = yield mongo.db.collection('usuarios').findOne({ correo });
+        const result = yield mongo.db.collection('usuarios').findOne({ usuario });
         if (result) {
-            /*if(result.isValid==false){
-                return res.status(401).json({
-                    ok:false,
-                    msg:`No has habilitado tu cuenta, en tu correo te mandamos un mail para que puedas darlo de alta`
-                });
-            }*/
-            if (result.oauth2 == true && result.contrasena == null) {
-                return res.status(401).json({
-                    ok: false,
-                    msg: `No has habilitado una contraseña para este correo. Intenta entrar con el boton de Gmail`
-                });
-            }
             if (!bcrypt_1.default.compareSync(contraseña, result.contrasena)) {
-                return res.status(500).json({
+                return res.status(401).json({
                     ok: false,
                     msg: `Credenciales incorrectas`
                 });
             }
-            const token = yield tokenHelper.create({ correo, nombreCompleto: result.nombreCompleto, fotoUrl: result.fotoUrl }, apikey);
-            console.log(token);
+            if (!(result.sesion == undefined || result.sesion == null)) {
+                console.log("otro dispositivo");
+                return res.status(401).json({
+                    ok: false,
+                    msg: `Sesión iniciada en otro dispositivo`
+                });
+            }
+            result.sesion = [{ inicioSesion: new Date() }];
+            mongo.db.collection('usuarios').replaceOne({ _id: result._id }, result);
+            const token = yield tokenHelper.create({ usuario, trabajador, role: result.role }, apikey);
             return res.status(200).json({
                 ok: true,
                 token: token.token
             });
         }
         else {
-            return res.status(500).json({
+            return res.status(401).json({
                 ok: false,
                 msg: `Credenciales incorrectas`
             });
@@ -119,6 +82,29 @@ Routes.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
     catch (error) {
         console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: `Error en el servidor`
+        });
+    }
+}));
+Routes.post('/logout', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { usuario } = req.body;
+    try {
+        const result = yield mongo.db.collection('usuarios').findOne({ usuario });
+        if (result) {
+            result.sesion = null;
+            mongo.db.collection('usuarios').replaceOne({ _id: result._id }, result);
+            return res.status(200).json({ ok: true, msg: 'Cierre de sesión exitoso' });
+        }
+        else {
+            return res.status(500).json({
+                ok: false,
+                msg: `No se encontro el usuario ${usuario}`
+            });
+        }
+    }
+    catch (error) {
         return res.status(500).json({
             ok: false,
             msg: `Error en el servidor`
